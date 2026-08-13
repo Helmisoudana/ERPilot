@@ -9,6 +9,7 @@ public final class VectorFormat {
     }
 
     public static String toPgVectorString(float[] vector) {
+
         return new PGvector(vector).toString();
     }
 }

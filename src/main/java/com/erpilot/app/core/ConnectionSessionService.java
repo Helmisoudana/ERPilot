@@ -11,11 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Garde en mémoire la connexion ERP active pour ce MVP (une seule connexion à la fois,
- * pas de multi-tenant). Établit la connexion, introspecte le schéma et déclenche
- * son indexation RAG en une seule étape — c'est le point d'entrée de tout le flux.
- */
+
 @Slf4j
 @Service
 public class ConnectionSessionService {

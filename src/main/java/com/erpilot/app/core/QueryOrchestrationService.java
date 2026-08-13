@@ -13,12 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Orchestrateur central : question -> schéma pertinent (rag-schema) -> SQL (llm)
- * -> validation (security) -> exécution (connector).
- * Contient la boucle d'auto-correction : si l'exécution échoue, l'erreur est
- * redonnée au LLM pour qu'il corrige sa requête, dans la limite de MAX_CORRECTION_ATTEMPTS.
- */
+
 @Slf4j
 @Service
 public class QueryOrchestrationService {

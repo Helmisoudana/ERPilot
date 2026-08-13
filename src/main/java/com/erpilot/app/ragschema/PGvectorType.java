@@ -12,13 +12,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
 
-/**
- * Type Hibernate personnalisé pour PGvector.
- *
- * Version Hibernate 7 : nullSafeGet/nullSafeSet utilisent désormais
- * WrapperOptions au lieu de SharedSessionContractImplementor
- * (l'ancienne signature est dépréciée depuis Hibernate 7, marquée "for removal").
- */
+
 public class PGvectorType implements UserType<PGvector> {
 
     @Override
