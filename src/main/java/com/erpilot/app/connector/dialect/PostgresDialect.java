@@ -16,6 +16,12 @@ public class PostgresDialect implements SqlDialect {
         if (trimmed.endsWith(";")) {
             trimmed = trimmed.substring(0, trimmed.length() - 1);
         }
+
+        // Si la requête contient déjà un LIMIT, ne pas en rajouter un second
+        if (trimmed.toUpperCase().matches("(?s).*\\bLIMIT\\s+\\d+\\s*$")) {
+            return trimmed;
+        }
+
         return trimmed + " LIMIT " + limit;
     }
 

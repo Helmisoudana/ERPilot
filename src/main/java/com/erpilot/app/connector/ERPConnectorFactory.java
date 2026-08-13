@@ -10,6 +10,7 @@ public class ERPConnectorFactory {
     private final SqlDialectFactory dialectFactory;
 
     public ERPConnectorFactory(SqlDialectFactory dialectFactory) {
+
         this.dialectFactory = dialectFactory;
     }
 

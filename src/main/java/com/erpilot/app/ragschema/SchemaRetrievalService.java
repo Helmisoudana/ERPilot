@@ -12,6 +12,7 @@ public class SchemaRetrievalService {
 
     private static final Logger log = LoggerFactory.getLogger(SchemaRetrievalService.class);
     private static final int DEFAULT_TOP_K = 5;
+    private static final double MAX_DISTANCE = 0.4;
 
     private final EmbeddingModel embeddingModel;
     private final SchemaChunkRepository repository;
@@ -23,14 +24,8 @@ public class SchemaRetrievalService {
 
     public List<SchemaChunk> findRelevantTables(String userQuestion, int topK) {
         float[] vector = embeddingModel.embed(userQuestion);
-
-        // Même conversion que SchemaIndexingService — un seul point de vérité (VectorFormat)
         String queryEmbedding = VectorFormat.toPgVectorString(vector);
-
-        List<SchemaChunk> results = repository.findSimilar(queryEmbedding, topK);
-        log.debug("Question '{}' -> {} table(s) pertinente(s) trouvée(s)", userQuestion, results.size());
-
-        return results;
+        return repository.findSimilar(queryEmbedding, topK, MAX_DISTANCE);
     }
 
     public List<SchemaChunk> findRelevantTables(String userQuestion) {

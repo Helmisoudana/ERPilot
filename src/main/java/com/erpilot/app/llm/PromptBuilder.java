@@ -2,6 +2,8 @@ package com.erpilot.app.llm;
 
 import com.erpilot.app.ragschema.SchemaChunk;
 import org.springframework.stereotype.Component;
+import com.erpilot.app.common.dto.QueryResult;
+import java.util.Map;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,5 +52,55 @@ public class PromptBuilder {
                 Corrige la requête SQL en tenant compte de cette erreur.
                 Réponds UNIQUEMENT avec la requête corrigée, sans explication.
                 """.formatted(failedSql, errorMessage, originalQuestion);
+    }
+    private static final String ANSWER_SYSTEM_TEMPLATE = """
+        Tu es un assistant qui explique en français, de façon claire et concise,
+        le résultat d'une requête SQL à un utilisateur métier qui ne connaît pas le SQL.
+
+        Règles :
+        - Réponds uniquement en langage naturel, sans SQL, sans JSON, sans markdown.
+        - Base-toi UNIQUEMENT sur les données fournies, n'invente aucun chiffre.
+        - Si une seule valeur est demandée, donne-la directement dans une phrase.
+        - Si plusieurs lignes sont retournées, résume les points clés (totaux, tendances,
+          valeurs extrêmes) puis, si pertinent, liste brièvement les éléments principaux.
+        - Sois synthétique : quelques phrases suffisent, sauf si la liste des résultats
+          est elle-même la réponse attendue.
+        """;
+
+    public String buildAnswerSystemPrompt() {
+        return ANSWER_SYSTEM_TEMPLATE;
+    }
+
+    public String buildAnswerUserPrompt(String question, QueryResult queryResult, int maxRows) {
+        List<Map<String, Object>> rows = queryResult.getRows();
+        List<Map<String, Object>> sample = rows.size() > maxRows ? rows.subList(0, maxRows) : rows;
+
+        String dataAsText = sample.stream()
+                .map(row -> row.entrySet().stream()
+                        .map(e -> e.getKey() + "=" + e.getValue())
+                        .collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
+
+        String truncationNote = rows.size() > maxRows
+                ? "\n(Résultat tronqué : " + rows.size() + " lignes au total, seules les "
+                  + maxRows + " premières sont montrées ci-dessus.)"
+                : "";
+
+        return """
+            Question de l'utilisateur : %s
+
+            Colonnes : %s
+            Nombre total de lignes : %d
+
+            Données :
+            %s%s
+
+            Rédige la réponse à donner à l'utilisateur.
+            """.formatted(
+                question,
+                String.join(", ", queryResult.getColumnsNames()),
+                queryResult.getRowCount(),
+                dataAsText,
+                truncationNote);
     }
 }

@@ -28,11 +28,7 @@ public class SchemaIndexingService {
         this.descriptionBuilder = descriptionBuilder;
     }
 
-    /**
-     * Indexe une table unique. Idempotent : les anciens chunks de cette
-     * table sont supprimés avant réinsertion, donc rappeler cette méthode
-     * plusieurs fois (ex: à chaque redémarrage) ne crée pas de doublons.
-     */
+
     @Transactional
     public void indexTable(TableMetadata table) {
         repository.deleteByTableName(table.getTableName());
@@ -49,10 +45,7 @@ public class SchemaIndexingService {
         log.info("Table indexée : {} ({} colonnes)", table.getTableName(), table.getColumns().size());
     }
 
-    /**
-     * Indexe un schéma complet en une fois — c'est cette méthode qui sera
-     * appelée depuis le module connector, juste après ERPConnector.introspectSchema().
-     */
+
     public void indexSchema(List<TableMetadata> tables) {
         log.info("Début indexation du schéma : {} tables", tables.size());
         tables.forEach(this::indexTable);
