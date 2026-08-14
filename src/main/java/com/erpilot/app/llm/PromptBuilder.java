@@ -8,79 +8,86 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @Component
 public class PromptBuilder {
 
-    private static final String SYSTEM_TEMPLATE = """
-            Tu es un expert générateur de requêtes SQL PostgreSQL.
+    private static final String UNIVERSAL_SYSTEM_TEMPLATE = """
+            Tu es un moteur Text-to-SQL universel ultra-performant. Ton rôle est de traduire une question en langage naturel en une requête SQL exacte, performante et minimale en te basant UNIQUEMENT sur le schéma de base de données fourni.
 
-            Règles strictes à respecter :
-            - Réponds UNIQUEMENT avec la requête SQL, sans aucune explication, sans markdown, sans ```sql
-            - Utilise UNIQUEMENT les tables et colonnes listées dans le contexte ci-dessous
-            - N'invente JAMAIS un nom de table ou de colonne qui n'apparaît pas dans ce contexte
-            - Génère uniquement des requêtes SELECT (jamais INSERT, UPDATE, DELETE, DROP, ALTER)
-            - N'ajoute pas de point-virgule final
-            - Si la question ne peut pas être répondue avec les tables disponibles, réponds exactement : IMPOSSIBLE
+            ### RÈGLES D'OR DE SIMPLICITÉ & D'EFFICACITÉ :
+            1. RÈGLE DE PARSIMONIE (Occam's Razor SQL) : Utilise le MINIMUM de tables nécessaire. N'effectue JAMAIS de jointure (JOIN) si la table principale contient déjà la colonne nécessaire pour le SELECT, le WHERE ou le ORDER BY.
+            2. INTERDICTION D'INVENTION : N'invente AUCUNE table, AUCUNE colonne et AUCUNE valeur. Si une information n'est pas dans le schéma, ne l'invente pas.
+            3. SÉCURITÉ STRICTE : Génère EXCLUSIVEMENT des requêtes de lecture (SELECT). Les commandes DDL/DML (INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE) sont STRICTEMENT INTERDITES.
+            4. COMPATIBILITÉ DIALECTE : Génère un SQL valide et optimisé pour le SGBD cible indiqué dans le schéma.
 
-            Règles PostgreSQL strictes :
-            1. GROUP BY : Toutes les colonnes présentes dans le SELECT qui ne sont PAS enveloppées dans une fonction d'agrégation (SUM, COUNT, AVG, MIN, MAX) doivent OBLIGATOIREMENT être présentes dans la clause GROUP BY.
-               Exemple : SELECT c.id, c.nom, SUM(o.montant) ... GROUP BY c.id, c.nom
-            2. PAS DE SUM(BOOLEAN) : Ne fais JAMAIS SUM(condition).
-               Pour compter des conditions, utilise COUNT(*) FILTER (WHERE condition) ou SUM(CASE WHEN condition THEN 1 ELSE 0 END).
-            3. TYPES NUMÉRIQUES : N'applique les fonctions SUM() et AVG() qu'à des colonnes strictement numériques.
+            ### RÈGLES DE FORMATAGE (RÉPONSE BRUTE) :
+            - Réponds UNIQUEMENT avec le code SQL brut.
+            - AUCUN mot d'explication, aucun texte introductif ou de conclusion.
+            - PAS de balises Markdown (NE PAS mettre ```sql ... ```).
+            - N'ajoute PAS de point-virgule (;) à la fin de la requête.
+            - Si la question est impossible à résoudre avec le schéma fourni, réponds exactement le mot : IMPOSSIBLE
 
-            Schéma disponible (tables pertinentes pour cette question) :
+            ### SCHÉMA DE LA BASE DE DONNÉES FOURNI :
             %s
             """;
 
     public String buildSystemPrompt(List<SchemaChunk> relevantContext) {
         String schemaDescription = relevantContext.stream()
                 .map(SchemaChunk::getDescription)
-                .collect(Collectors.joining("\n"));
-        return SYSTEM_TEMPLATE.formatted(schemaDescription);
+                .collect(Collectors.joining("\n\n"));
+        return UNIVERSAL_SYSTEM_TEMPLATE.formatted(schemaDescription);
     }
 
     public String buildUserPrompt(String userQuestion) {
-        return "Question : " + userQuestion;
+        return """
+                ### ALGORITHME DE RAISONNEMENT INTELLECTUEL (À exécuter mentalement) :
+                Étape 1 : Identifie les entités métier principales mentionnées dans la question.
+                Étape 2 : Cherche les tables du schéma qui contiennent ces entités.
+                Étape 3 : Vérifie si TOUTES les données demandées (colonnes à afficher et colonnes de filtre) résident dans UNE SEULE table. 
+                         -> Si OUI : Génère un SELECT simple sans aucun JOIN.
+                         -> Si NON : Identifie le chemin de jointure (JOIN) le plus court et direct via les clés étrangères explicites.
+                Étape 4 : Applique les filtres WHERE et l'agrégation (GROUP BY) si nécessaire.
+
+                Question de l'utilisateur : %s
+                """.formatted(userQuestion);
     }
 
     public String buildCorrectionPrompt(String failedSql, String errorMessage, String originalQuestion) {
         return """
-                La requête SQL suivante a échoué :
+                La requête SQL suivante a échoué lors de son exécution sur le SGBD :
+                
+                [SQL en échec]
                 %s
 
-                Erreur retournée par la base de données :
+                [Message d'erreur du SGBD]
                 %s
 
-                Question originale de l'utilisateur : %s
+                [Question initiale de l'utilisateur]
+                %s
 
-                Instructions de correction :
-                1. Analyse attentivement le message d'erreur de PostgreSQL.
-                2. Si l'erreur mentionne 'must appear in the GROUP BY clause', ajoute TOUTES les colonnes non agrégées du SELECT dans le GROUP BY.
-                3. Si l'erreur mentionne 'function sum(boolean) does not exist', remplace SUM(condition) par COUNT(*) FILTER (WHERE condition) ou un CASE WHEN.
-                4. Corrige la requête SQL en respectant le schéma et ces règles.
+                ### INSTRUCTIONS DE AUTO-CORRECTION :
+                1. Lis attentivement le message d'erreur du SGBD pour diagnostiquer le problème exact (ex: colonne introuvable, erreur de syntaxe, manque dans GROUP BY, type incompatible).
+                2. Vérifie la présence de jointures inutiles qui auraient pu provoquer une erreur ou un résultat vide.
+                3. Génère la version corrigée de la requête SQL en respectant scrupuleusement le schéma fourni.
 
-                Réponds UNIQUEMENT avec la requête SQL corrigée, sans aucune explication ni bloc markdown.
+                Réponds UNIQUEMENT avec le code SQL corrigé, sans Markdown et sans texte explicatif.
                 """.formatted(failedSql, errorMessage, originalQuestion);
     }
 
-    private static final String ANSWER_SYSTEM_TEMPLATE = """
-        Tu es un assistant qui explique en français, de façon claire et concise,
-        le résultat d'une requête SQL à un utilisateur métier qui ne connaît pas le SQL.
+    private static final String UNIVERSAL_ANSWER_SYSTEM_TEMPLATE = """
+        Tu es un assistant d'analyse de données universel. Ton rôle est d'expliquer les résultats d'une requête SQL de façon fluide, claire et accessible à un utilisateur métier non technique.
 
-        Règles :
-        - Réponds uniquement en langage naturel, sans SQL, sans JSON, sans markdown.
-        - Base-toi UNIQUEMENT sur les données fournies, n'invente aucun chiffre.
-        - Si une seule valeur est demandée, donne-la directement dans une phrase.
-        - Si plusieurs lignes sont retournées, résume les points clés (totaux, tendances,
-          valeurs extrêmes) puis, si pertinent, liste brièvement les éléments principaux.
-        - Sois synthétique : quelques phrases suffisent, sauf si la liste des résultats
-          est elle-même la réponse attendue.
+        Directives :
+        - Rédige uniquement en langage naturel clair (français).
+        - Ne mentionne JAMAIS de termes techniques de base de données (pas de mots comme SQL, Query, SELECT, ID, JSON, NULL, etc.).
+        - Base ta réponse STRICTEMENT et EXCLUSIVEMENT sur les données fournies. N'invente aucun fait, aucun chiffre.
+        - Si le résultat est un chiffre/compteur unique : Donne directement l'information en une phrase synthétique.
+        - Si le résultat est un tableau/liste de données : Fais un résumé des points clés ou du total, puis présente les résultats de manière ordonnée et facile à lire.
+        - Reste concis et professionnel (2 à 4 phrases suffisent généralement).
         """;
 
     public String buildAnswerSystemPrompt() {
-        return ANSWER_SYSTEM_TEMPLATE;
+        return UNIVERSAL_ANSWER_SYSTEM_TEMPLATE;
     }
 
     public String buildAnswerUserPrompt(String question, QueryResult queryResult, int maxRows) {
@@ -94,24 +101,25 @@ public class PromptBuilder {
                 .collect(Collectors.joining("\n"));
 
         String truncationNote = rows.size() > maxRows
-                ? "\n(Résultat tronqué : " + rows.size() + " lignes au total, seules les "
-                  + maxRows + " premières sont montrées ci-dessus.)"
+                ? "\n(Note : Données tronquées. " + rows.size() + " lignes au total, seules les "
+                  + maxRows + " premières sont affichées ci-dessus.)"
                 : "";
 
         return """
-            Question de l'utilisateur : %s
+            Question initiale de l'utilisateur : %s
 
-            Colonnes : %s
-            Nombre total de lignes : %d
+            [Données brutes récupérées]
+            Nombre de lignes retournées : %d
+            Nom des colonnes : %s
 
-            Données :
+            Extrait des données :
             %s%s
 
-            Rédige la réponse à donner à l'utilisateur.
+            Rédige la réponse finale en langage naturel à destination de l'utilisateur.
             """.formatted(
                 question,
-                String.join(", ", queryResult.getColumnsNames()),
                 queryResult.getRowCount(),
+                String.join(", ", queryResult.getColumnsNames()),
                 dataAsText,
                 truncationNote);
     }

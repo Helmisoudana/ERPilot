@@ -1,0 +1,141 @@
+2026-08-15 00:02:51.826 [http-nio-8080-exec-3] INFO  [traceId=201a0287-7da5-40e9-9fc1-6ff6e804a766] c.e.app.llm.SqlGenerationService - SQL généré : SELECT T1.company_name, T1.city FROM customers AS T1 INNER JOIN customer_customer_demo AS T2 ON T1.customer_id = T2.customer_id INNER JOIN customer_demographics AS T3 ON T2.customer_type_id = T3.customer_type_id WHERE T3.customer_desc = 'French speaking European' AND T1.country = 'France'
+2026-08-15 00:13:53.449 [SpringApplicationShutdownHook] INFO  [traceId=n/a] o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-08-15 00:13:53.454 [tomcat-shutdown] INFO  [traceId=n/a] o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-08-15 00:13:53.457 [SpringApplicationShutdownHook] INFO  [traceId=n/a] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 00:13:53.460 [SpringApplicationShutdownHook] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-08-15 00:13:53.461 [SpringApplicationShutdownHook] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-08-15 00:14:03.000 [background-preinit] INFO  [traceId=n/a] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.1.0.Final
+2026-08-15 00:14:03.043 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - Starting ErPilotApplication using Java 21.0.11 with PID 38753 (/home/helmi/Desktop/ERPilot/target/classes started by helmi in /home/helmi/Desktop/ERPilot)
+2026-08-15 00:14:03.043 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - No active profile set, falling back to 1 default profile: "default"
+2026-08-15 00:14:03.076 [restartedMain] INFO  [traceId=n/a] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-08-15 00:14:03.076 [restartedMain] INFO  [traceId=n/a] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-08-15 00:14:03.545 [restartedMain] INFO  [traceId=n/a] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-15 00:14:03.639 [restartedMain] INFO  [traceId=n/a] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 87 ms. Found 1 JPA repository interface.
+2026-08-15 00:14:03.938 [restartedMain] INFO  [traceId=n/a] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-08-15 00:14:03.948 [restartedMain] INFO  [traceId=n/a] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-08-15 00:14:03.949 [restartedMain] INFO  [traceId=n/a] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-15 00:14:03.949 [restartedMain] INFO  [traceId=n/a] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-15 00:14:03.971 [restartedMain] INFO  [traceId=n/a] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 895 ms
+2026-08-15 00:14:04.089 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-15 00:14:04.143 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-15 00:14:04.434 [restartedMain] INFO  [traceId=n/a] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-15 00:14:04.455 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-15 00:14:04.563 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6d8dfd1a
+2026-08-15 00:14:04.564 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-15 00:14:04.582 [restartedMain] WARN  [traceId=n/a] org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-15 00:14:04.595 [restartedMain] INFO  [traceId=n/a] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-15 00:14:05.103 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-15 00:14:05.145 [restartedMain] INFO  [traceId=n/a] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 00:14:05.400 [restartedMain] INFO  [traceId=n/a] o.s.d.j.r.q.QueryEnhancerFactories - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2026-08-15 00:14:05.400 [restartedMain] INFO  [traceId=n/a] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-15 00:14:05.711 [restartedMain] WARN  [traceId=n/a] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-15 00:14:05.886 [restartedMain] INFO  [traceId=n/a] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-08-15 00:14:05.895 [restartedMain] INFO  [traceId=n/a] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-08-15 00:14:05.899 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - Started ErPilotApplication in 3.192 seconds (process running for 3.459)
+2026-08-15 00:14:05.928 [restartedMain] INFO  [traceId=n/a] c.e.app.connector.JdbcErpConnector - Connecté à jdbc:postgresql://localhost:5432/postgres via dialecte postgresql
+2026-08-15 00:14:06.004 [restartedMain] INFO  [traceId=n/a] c.e.app.connector.JdbcErpConnector - 15 tables découvertes
+2026-08-15 00:14:06.004 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Début indexation du schéma : 15 tables
+2026-08-15 00:14:09.711 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : categories (4 colonnes)
+2026-08-15 00:14:09.755 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customer_customer_demo (2 colonnes)
+2026-08-15 00:14:09.792 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customer_demographics (2 colonnes)
+2026-08-15 00:14:09.832 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customers (11 colonnes)
+2026-08-15 00:14:09.869 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : employee_territories (2 colonnes)
+2026-08-15 00:14:09.915 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : employees (18 colonnes)
+2026-08-15 00:14:09.950 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : order_details (5 colonnes)
+2026-08-15 00:14:09.989 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : orders (14 colonnes)
+2026-08-15 00:14:10.026 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : products (10 colonnes)
+2026-08-15 00:14:10.062 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : region (2 colonnes)
+2026-08-15 00:14:10.098 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : schema_chunks (4 colonnes)
+2026-08-15 00:14:10.133 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : shippers (3 colonnes)
+2026-08-15 00:14:10.172 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : suppliers (12 colonnes)
+2026-08-15 00:14:10.207 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : territories (3 colonnes)
+2026-08-15 00:14:10.242 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : us_states (4 colonnes)
+2026-08-15 00:14:10.242 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Indexation terminée : 15 tables indexées
+2026-08-15 00:14:10.242 [restartedMain] INFO  [traceId=n/a] c.e.a.core.ConnectionSessionService - Connexion établie et schéma indexé (15 tables, dialecte postgresql)
+2026-08-15 00:14:10.242 [restartedMain] INFO  [traceId=n/a] c.e.a.c.c.StartupConnectionRunner - Connexion automatique établie au démarrage (dialecte: postgresql)
+2026-08-15 00:15:11.877 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-15 00:15:11.877 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-08-15 00:15:11.878 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-08-15 00:15:33.403 [http-nio-8080-exec-1] INFO  [traceId=9c55151f-b750-4f5c-b804-34f2b6f733be] c.e.app.llm.SqlGenerationService - SQL généré : SELECT company_name, city FROM customers WHERE country = 'France'
+2026-08-15 00:17:43.054 [SpringApplicationShutdownHook] INFO  [traceId=n/a] o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-08-15 00:17:43.055 [tomcat-shutdown] INFO  [traceId=n/a] o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-08-15 00:17:43.057 [SpringApplicationShutdownHook] INFO  [traceId=n/a] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 00:17:43.060 [SpringApplicationShutdownHook] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-08-15 00:17:43.062 [SpringApplicationShutdownHook] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-08-15 00:17:59.403 [background-preinit] INFO  [traceId=n/a] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.1.0.Final
+2026-08-15 00:17:59.445 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - Starting ErPilotApplication using Java 21.0.11 with PID 42245 (/home/helmi/Desktop/ERPilot/target/classes started by helmi in /home/helmi/Desktop/ERPilot)
+2026-08-15 00:17:59.445 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - No active profile set, falling back to 1 default profile: "default"
+2026-08-15 00:17:59.475 [restartedMain] INFO  [traceId=n/a] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-08-15 00:17:59.476 [restartedMain] INFO  [traceId=n/a] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-08-15 00:17:59.916 [restartedMain] INFO  [traceId=n/a] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-15 00:18:00.004 [restartedMain] INFO  [traceId=n/a] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 81 ms. Found 1 JPA repository interface.
+2026-08-15 00:18:00.299 [restartedMain] INFO  [traceId=n/a] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-08-15 00:18:00.307 [restartedMain] INFO  [traceId=n/a] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-08-15 00:18:00.309 [restartedMain] INFO  [traceId=n/a] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-15 00:18:00.310 [restartedMain] INFO  [traceId=n/a] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-15 00:18:00.333 [restartedMain] INFO  [traceId=n/a] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 857 ms
+2026-08-15 00:18:00.445 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-15 00:18:00.487 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-15 00:18:00.763 [restartedMain] INFO  [traceId=n/a] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-15 00:18:00.786 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-15 00:18:00.904 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@f80a4f6
+2026-08-15 00:18:00.905 [restartedMain] INFO  [traceId=n/a] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-15 00:18:00.927 [restartedMain] WARN  [traceId=n/a] org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-15 00:18:00.941 [restartedMain] INFO  [traceId=n/a] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-15 00:18:01.497 [restartedMain] INFO  [traceId=n/a] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-15 00:18:01.537 [restartedMain] INFO  [traceId=n/a] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 00:18:01.804 [restartedMain] INFO  [traceId=n/a] o.s.d.j.r.q.QueryEnhancerFactories - JSqlParser is in classpath; If applicable, JSqlParser will be used
+2026-08-15 00:18:01.804 [restartedMain] INFO  [traceId=n/a] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-15 00:18:02.104 [restartedMain] WARN  [traceId=n/a] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-15 00:18:02.273 [restartedMain] INFO  [traceId=n/a] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-08-15 00:18:02.282 [restartedMain] INFO  [traceId=n/a] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-08-15 00:18:02.287 [restartedMain] INFO  [traceId=n/a] com.erpilot.app.ErPilotApplication - Started ErPilotApplication in 3.186 seconds (process running for 3.446)
+2026-08-15 00:18:02.315 [restartedMain] INFO  [traceId=n/a] c.e.app.connector.JdbcErpConnector - Connecté à jdbc:postgresql://localhost:5432/postgres via dialecte postgresql
+2026-08-15 00:18:02.389 [restartedMain] INFO  [traceId=n/a] c.e.app.connector.JdbcErpConnector - 15 tables découvertes
+2026-08-15 00:18:02.389 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Début indexation du schéma : 15 tables
+2026-08-15 00:18:04.196 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : categories (4 colonnes)
+2026-08-15 00:18:04.320 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customer_customer_demo (2 colonnes)
+2026-08-15 00:18:04.407 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customer_demographics (2 colonnes)
+2026-08-15 00:18:04.464 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : customers (11 colonnes)
+2026-08-15 00:18:04.519 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : employee_territories (2 colonnes)
+2026-08-15 00:18:04.582 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : employees (18 colonnes)
+2026-08-15 00:18:04.639 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : order_details (5 colonnes)
+2026-08-15 00:18:04.699 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : orders (14 colonnes)
+2026-08-15 00:18:04.757 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : products (10 colonnes)
+2026-08-15 00:18:04.812 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : region (2 colonnes)
+2026-08-15 00:18:04.870 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : schema_chunks (4 colonnes)
+2026-08-15 00:18:04.925 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : shippers (3 colonnes)
+2026-08-15 00:18:04.981 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : suppliers (12 colonnes)
+2026-08-15 00:18:05.035 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : territories (3 colonnes)
+2026-08-15 00:18:05.090 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Table indexée : us_states (4 colonnes)
+2026-08-15 00:18:05.090 [restartedMain] INFO  [traceId=n/a] c.e.a.r.SchemaIndexingService - Indexation terminée : 15 tables indexées
+2026-08-15 00:18:05.090 [restartedMain] INFO  [traceId=n/a] c.e.a.core.ConnectionSessionService - Connexion établie et schéma indexé (15 tables, dialecte postgresql)
+2026-08-15 00:18:05.090 [restartedMain] INFO  [traceId=n/a] c.e.a.c.c.StartupConnectionRunner - Connexion automatique établie au démarrage (dialecte: postgresql)
+2026-08-15 00:18:32.725 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-15 00:18:32.725 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-08-15 00:18:32.726 [http-nio-8080-exec-1] INFO  [traceId=n/a] o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-08-15 00:18:39.636 [http-nio-8080-exec-1] INFO  [traceId=b877b2c2-5ba9-4b20-9797-e3c727626d4c] c.e.app.llm.SqlGenerationService - SQL généré : SELECT company_name, city 
+FROM customers 
+WHERE country = 'France'
