@@ -11,8 +11,10 @@ import com.erpilot.app.security.SqlSecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -83,10 +85,34 @@ public class QueryOrchestrationService {
             log.warn("Exécution échouée (tentative {}), demande de correction au LLM : {}",
                     attempt + 1, e.getMessage());
 
-            String correctedSql = sqlGenerationService.correctSql(
-                    candidateSql, e.getMessage(), question, relevantContext);
+            List<SchemaChunk> refreshedContext = refreshRelevantContext(question, e.getMessage(), relevantContext);
 
-            return executeWithRetry(question, role, relevantContext, correctedSql, connector, attempt + 1);
+            String correctedSql = sqlGenerationService.correctSql(
+                    candidateSql, e.getMessage(), question, refreshedContext);
+
+            return executeWithRetry(question, role, refreshedContext, correctedSql, connector, attempt + 1);
         }
+    }
+
+
+    private List<SchemaChunk> refreshRelevantContext(String question, String errorMessage,
+                                                     List<SchemaChunk> previousContext) {
+        String correctionQuery = question + " " + errorMessage;
+        List<SchemaChunk> retrieved = schemaRetrievalService.findRelevantTables(correctionQuery);
+
+        Map<String, SchemaChunk> merged = new LinkedHashMap<>();
+        previousContext.forEach(chunk -> merged.put(chunk.getTableName(), chunk));
+        retrieved.forEach(chunk -> merged.put(chunk.getTableName(), chunk));
+
+        List<String> newTables = retrieved.stream()
+                .map(SchemaChunk::getTableName)
+                .filter(t -> previousContext.stream().noneMatch(p -> p.getTableName().equals(t)))
+                .toList();
+
+        if (!newTables.isEmpty()) {
+            log.info("Nouvelles tables ajoutées au schéma suite à l'erreur SQL : {}", newTables);
+        }
+
+        return new ArrayList<>(merged.values());
     }
 }

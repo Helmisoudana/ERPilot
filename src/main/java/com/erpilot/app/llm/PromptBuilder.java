@@ -1,11 +1,11 @@
 package com.erpilot.app.llm;
 
+import com.erpilot.app.common.dto.QueryResult;
 import com.erpilot.app.ragschema.SchemaChunk;
 import org.springframework.stereotype.Component;
-import com.erpilot.app.common.dto.QueryResult;
-import java.util.Map;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class PromptBuilder {
 
     private static final String SYSTEM_TEMPLATE = """
-            Tu es un générateur de requêtes SQL PostgreSQL.
+            Tu es un expert générateur de requêtes SQL PostgreSQL.
 
             Règles strictes à respecter :
             - Réponds UNIQUEMENT avec la requête SQL, sans aucune explication, sans markdown, sans ```sql
@@ -22,6 +22,13 @@ public class PromptBuilder {
             - Génère uniquement des requêtes SELECT (jamais INSERT, UPDATE, DELETE, DROP, ALTER)
             - N'ajoute pas de point-virgule final
             - Si la question ne peut pas être répondue avec les tables disponibles, réponds exactement : IMPOSSIBLE
+
+            Règles PostgreSQL strictes :
+            1. GROUP BY : Toutes les colonnes présentes dans le SELECT qui ne sont PAS enveloppées dans une fonction d'agrégation (SUM, COUNT, AVG, MIN, MAX) doivent OBLIGATOIREMENT être présentes dans la clause GROUP BY.
+               Exemple : SELECT c.id, c.nom, SUM(o.montant) ... GROUP BY c.id, c.nom
+            2. PAS DE SUM(BOOLEAN) : Ne fais JAMAIS SUM(condition).
+               Pour compter des conditions, utilise COUNT(*) FILTER (WHERE condition) ou SUM(CASE WHEN condition THEN 1 ELSE 0 END).
+            3. TYPES NUMÉRIQUES : N'applique les fonctions SUM() et AVG() qu'à des colonnes strictement numériques.
 
             Schéma disponible (tables pertinentes pour cette question) :
             %s
@@ -38,7 +45,6 @@ public class PromptBuilder {
         return "Question : " + userQuestion;
     }
 
-
     public String buildCorrectionPrompt(String failedSql, String errorMessage, String originalQuestion) {
         return """
                 La requête SQL suivante a échoué :
@@ -49,10 +55,16 @@ public class PromptBuilder {
 
                 Question originale de l'utilisateur : %s
 
-                Corrige la requête SQL en tenant compte de cette erreur.
-                Réponds UNIQUEMENT avec la requête corrigée, sans explication.
+                Instructions de correction :
+                1. Analyse attentivement le message d'erreur de PostgreSQL.
+                2. Si l'erreur mentionne 'must appear in the GROUP BY clause', ajoute TOUTES les colonnes non agrégées du SELECT dans le GROUP BY.
+                3. Si l'erreur mentionne 'function sum(boolean) does not exist', remplace SUM(condition) par COUNT(*) FILTER (WHERE condition) ou un CASE WHEN.
+                4. Corrige la requête SQL en respectant le schéma et ces règles.
+
+                Réponds UNIQUEMENT avec la requête SQL corrigée, sans aucune explication ni bloc markdown.
                 """.formatted(failedSql, errorMessage, originalQuestion);
     }
+
     private static final String ANSWER_SYSTEM_TEMPLATE = """
         Tu es un assistant qui explique en français, de façon claire et concise,
         le résultat d'une requête SQL à un utilisateur métier qui ne connaît pas le SQL.

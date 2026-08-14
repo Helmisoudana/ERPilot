@@ -3,6 +3,7 @@ package com.erpilot.app.ragschema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +12,15 @@ import java.util.List;
 public class SchemaRetrievalService {
 
     private static final Logger log = LoggerFactory.getLogger(SchemaRetrievalService.class);
-    private static final int DEFAULT_TOP_K = 5;
-    private static final double MAX_DISTANCE = 0.4;
 
     private final EmbeddingModel embeddingModel;
     private final SchemaChunkRepository repository;
+
+    @Value("${rag.schema.top-k:5}")
+    private int defaultTopK;
+
+    @Value("${rag.schema.max-distance:0.4}")
+    private double maxDistance;
 
     public SchemaRetrievalService(EmbeddingModel embeddingModel, SchemaChunkRepository repository) {
         this.embeddingModel = embeddingModel;
@@ -25,10 +30,10 @@ public class SchemaRetrievalService {
     public List<SchemaChunk> findRelevantTables(String userQuestion, int topK) {
         float[] vector = embeddingModel.embed(userQuestion);
         String queryEmbedding = VectorFormat.toPgVectorString(vector);
-        return repository.findSimilar(queryEmbedding, topK, MAX_DISTANCE);
+        return repository.findSimilar(queryEmbedding, topK, maxDistance);
     }
 
     public List<SchemaChunk> findRelevantTables(String userQuestion) {
-        return findRelevantTables(userQuestion, DEFAULT_TOP_K);
+        return findRelevantTables(userQuestion, defaultTopK);
     }
 }

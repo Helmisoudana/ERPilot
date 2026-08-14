@@ -5,6 +5,7 @@ import com.erpilot.app.common.dto.TableMetadata;
 import com.erpilot.app.common.exception.ConnectionException;
 import com.erpilot.app.connector.ERPConnector;
 import com.erpilot.app.connector.ERPConnectorFactory;
+import com.erpilot.app.ragschema.SchemaCatalogService;
 import com.erpilot.app.ragschema.SchemaIndexingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,17 @@ public class ConnectionSessionService {
 
     private final ERPConnectorFactory connectorFactory;
     private final SchemaIndexingService schemaIndexingService;
+    private final SchemaCatalogService schemaCatalogService;
 
     private ERPConnector activeConnector;
     private ConnectionConfig activeConfig;
 
     public ConnectionSessionService(ERPConnectorFactory connectorFactory,
-                                    SchemaIndexingService schemaIndexingService) {
+                                    SchemaIndexingService schemaIndexingService,
+                                    SchemaCatalogService schemaCatalogService) {
         this.connectorFactory = connectorFactory;
         this.schemaIndexingService = schemaIndexingService;
+        this.schemaCatalogService = schemaCatalogService;
     }
 
     public synchronized String connect(ConnectionConfig config) {
@@ -37,6 +41,7 @@ public class ConnectionSessionService {
         ERPConnector connector = connectorFactory.createAndConnect(config);
         List<TableMetadata> tables = connector.introspectSchema();
         schemaIndexingService.indexSchema(tables);
+        schemaCatalogService.updateCatalog(tables);
 
         this.activeConnector = connector;
         this.activeConfig = config;

@@ -1,11 +1,9 @@
 package com.erpilot.app.security;
 
-import org.springframework.http.HttpStatus;
+import com.erpilot.app.common.exception.SqlValidationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
 
 @Service
 public class SqlSecurityService {
@@ -22,7 +20,7 @@ public class SqlSecurityService {
         SqlValidationResult validation = validator.validate(rawSql);
 
         if (!validation.isValid()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, validation.getErrorMessage());
+            throw new SqlValidationException(validation.getErrorMessage());
         }
 
         for (SecurityRule rule : rules) {
