@@ -52,7 +52,6 @@ Deux façons de l'utiliser :
 
 ![Démo ErPilot](docs/assets/demo.webp)
 
-> Remplace `docs/demo.webp` par ta capture d'écran enregistrée (crée le dossier `docs/` à la racine du projet et dépose-y le fichier `demo.webp`). GitHub affiche nativement les fichiers `.webp` animés dans le README, comme un GIF.
 
 ---
 
@@ -128,20 +127,10 @@ spring.ai.ollama.embedding.options.model=nomic-embed-text
 erpilot.connection.url=jdbc:postgresql://localhost:5432/mon_erp
 erpilot.connection.username=<utilisateur_erp>
 erpilot.connection.password=<mot_de_passe_erp>
+rag.schema.top-k=3
+rag.schema.max-distance=0.8
 ```
 
-Si tu ne renseignes pas `erpilot.connection.*`, ErPilot démarre sans base ERP connectée et attend un appel explicite à :
-
-```bash
-POST /api/connections/connect
-Content-Type: application/json
-
-{
-  "url": "jdbc:postgresql://localhost:5432/mon_erp",
-  "username": "...",
-  "password": "..."
-}
-```
 
 ### 5. Lancer l'application
 
