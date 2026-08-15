@@ -1,125 +1,188 @@
-# ERPilot — Assistant SQL local pour ERP (Text-to-SQL + RAG)
+# ErPilot
 
-Assistant intelligent qui permet d'interroger n'importe quelle base de données ERP en langage naturel, sans que la moindre donnée ne quitte l'entreprise. Le système se connecte automatiquement à une base ERP, comprend sa structure, puis traduit les questions des utilisateurs en requêtes SQL sécurisées, exécutées et journalisées.
+🔓 **Projet open source**
 
-## Sommaire
+**Interroge ton ERP en langage naturel — sans écrire une seule ligne de SQL.**
 
-- [Présentation](#présentation)
-- [Architecture](#architecture)
-- [Flux de traitement d'une question](#flux-de-traitement-dune-question)
-- [Stack technique](#stack-technique)
-- [Concepts clés](#concepts-clés)
-- [Prérequis](#prérequis)
-- [Installation](#installation)
-- [Utilisation](#utilisation)
-- [Sécurité](#sécurité)
-- [Structure du projet](#structure-du-projet)
-- [Roadmap](#roadmap)
+ErPilot est un **agent open source**, montable sur n'importe quel ERP, capable de répondre à n'importe quelle question posée sur les données de cet ERP — juste avec une question. Il se connecte à la base de données de l'ERP, comprend sa structure automatiquement (RAG sur le schéma), et transforme la question en langage naturel en une requête SQL exécutée en toute sécurité, avec correction automatique en cas d'erreur.
 
-## Présentation
+---
 
-ERPilot est une application **on-premise** qui permet à un utilisateur métier de poser une question en français (ex : *"combien de produits sont en rupture de stock ?"*) et d'obtenir une réponse basée sur les données réelles de son ERP, sans écrire de SQL et sans envoyer de données à un service cloud externe.
+## 📌 Problématique
 
-Le système repose sur trois piliers :
+Plus un ERP grandit — beaucoup d'onglets, beaucoup de tables, beaucoup de lignes — plus il devient difficile d'en extraire une information précise sans :
+- connaître en détail le schéma de la base de données et savoir écrire du SQL,
+- solliciter un(e) développeur/DBA à chaque nouvelle question,
+- se contenter des rapports prédéfinis, souvent trop rigides pour suivre la complexité réelle des données.
 
-1. **Généricité** — via une introspection automatique du schéma de la base (JDBC), ERPilot s'adapte à n'importe quel ERP sans configuration manuelle des tables.
-2. **Confidentialité** — le LLM (Ollama) tourne en local ; aucune donnée ne sort de l'infrastructure de l'entreprise.
-3. **Sécurité** — chaque requête générée par le LLM passe par un validateur (sandbox SQL) avant exécution, avec gestion des permissions par rôle et journalisation complète.
+**ErPilot supprime cette barrière, quelle que soit la taille de l'ERP.** N'importe quel utilisateur métier pose sa question en français (ou dans une autre langue), et le système se charge de retrouver les bonnes tables au milieu de centaines d'autres, générer le SQL correspondant, l'exécuter, et retourner un résultat exploitable.
 
-## Architecture
+Deux façons de l'utiliser :
+- **En agent connecté** : ErPilot se branche sur la base de données de l'ERP existant, sans rien modifier à l'application en place.
+- **Intégré directement au projet** : ErPilot devient un module du projet ERP lui-même.
 
-L'application est un **monolithe modulaire** développé en Spring Boot, organisé en packages indépendants selon leur responsabilité (core, connecteurs, RAG, LLM, sécurité, audit, API).
+---
 
-<!-- 📌 Emplacement 1 : schéma des modules de l'application -->
-![Architecture modulaire de l'application](./images/modules_monolithe_erp.png)
+## ✨ Fonctionnalités
 
-## Flux de traitement d'une question
+- **Texte → SQL** : génération de requêtes SQL à partir d'une question en langage naturel, via un LLM.
+- **RAG sur le schéma de la base** : les tables/colonnes pertinentes sont retrouvées automatiquement par recherche vectorielle (pgvector) avant génération, plutôt que d'envoyer tout le schéma au LLM à chaque question — indispensable dès que l'ERP compte beaucoup de tables.
+- **LLM local ou via API** : ErPilot fonctionne aussi bien avec **Ollama en local** (aucun appel externe, tout tourne sur ta propre machine) qu'avec une **API LLM externe** (OpenAI, etc.), selon que tu privilégies la confidentialité totale, la simplicité, ou la puissance d'un modèle hébergé.
+- **Confidentialité par conception** : le LLM ne voit **jamais** tes données. Il ne reçoit que le *schéma* de la base — noms de tables et de colonnes, récupérés via le RAG — jamais les lignes, jamais les valeurs. Son seul rôle est de produire une requête SQL ; c'est cette requête qui est ensuite exécutée directement sur ta base de données, sans que le contenu de tes données ne transite par le modèle.
+- **Auto-correction** : si le SQL généré échoue à l'exécution, ErPilot renvoie l'erreur au LLM et retente une génération corrigée automatiquement.
+- **Sécurité SQL à deux niveaux** : la validation ne se limite pas à des règles sémantiques (lecture seule, mots-clés interdits...) — chaque requête générée est aussi vérifiée structurellement : les tables qu'elle référence doivent réellement exister dans le schéma de la base connectée, sinon la requête est rejetée avant exécution.
+- **Connecteur multi-ERP** : architecture pensée pour se connecter à n'importe quelle base via JDBC, avec détection ou configuration explicite du dialecte SQL.
+- **Gestion d'erreurs robuste** : le serveur ne plante jamais silencieusement — chaque erreur (LLM indisponible, SQL invalide, connexion perdue...) est capturée, loguée dans des fichiers dédiés, et renvoyée au client sous une forme exploitable avec un identifiant de traçabilité (`traceId`).
+- **API REST** simple (`POST /api/query`) — utilisable depuis n'importe quel client (front web, script, terminal).
+- **Terminal coloré** fourni pour tester et faire des démos rapidement, sans interface graphique.
 
-Une question posée par l'utilisateur traverse successivement le RAG (sélection des tables pertinentes), le LLM local (génération du SQL), le module de sécurité (validation et sandbox), le connecteur ERP (exécution), puis retourne une réponse journalisée.
+---
 
-<!-- 📌 Emplacement 2 : schéma du flux de traitement -->
-![Flux de traitement d'une requête utilisateur](./images/flux_agent_erp.png)
+## 💡 Exemple concret
 
-## Stack technique
+> Un responsable commercial veut savoir : *« Quels sont les clients qui ont commandé plus de trois fois ce trimestre, mais dont le panier moyen a baissé par rapport au trimestre précédent ? »*
+>
+> Ce cas n'a jamais été prévu par les développeurs au moment de concevoir les rapports standards de l'ERP — aucun écran, aucun filtre prédéfini ne le couvre. Avec un ERP classique, il faudrait ouvrir un ticket et attendre qu'un développeur écrive une requête sur mesure.
+>
+> **Avec ErPilot, la question est posée telle quelle — et la requête SQL correspondante est générée et exécutée immédiatement.** Pas de ticket, pas d'attente : la limite des rapports figés de l'ERP devient invisible, et le point fort d'ErPilot apparaît clairement — répondre à des questions qu'on n'avait même pas imaginées.
 
-| Composant | Technologie |
-|---|---|
-| Backend | Java 21, Spring Boot 3.x |
-| IA / LLM | Ollama (Llama 3.1) en local, via Spring AI |
-| Embeddings | nomic-embed-text |
-| Base de données | PostgreSQL + extension pgvector |
-| Validation SQL | JSqlParser |
-| Connexion ERP | JDBC (introspection automatique du schéma) |
-| Conteneurisation | Docker / Docker Compose |
+---
 
-## Concepts clés
+## 🎥 Démonstration
 
-- **RAG (Retrieval-Augmented Generation)** : avant de générer du SQL, le système recherche les tables/colonnes les plus pertinentes par similarité vectorielle, plutôt que de fournir tout le schéma au LLM.
-- **Text-to-SQL** : transformation d'une question en langage naturel en requête SQL exécutable, guidée par le contexte RAG.
-- **Sandbox SQL** : toute requête générée est analysée avant exécution — uniquement des `SELECT`, tables autorisées, `LIMIT` automatique.
-- **RLS / permissions par rôle** : chaque utilisateur ne peut interroger que les tables associées à son rôle.
-- **Masking** : les données sensibles (emails, montants, numéros) sont anonymisées avant d'être affichées.
-- **Audit log** : chaque question, requête SQL générée, et résultat est journalisé pour la traçabilité.
+![Démo ErPilot](docs/assets/demo.webp)
 
-## Prérequis
+> Remplace `docs/demo.webp` par ta capture d'écran enregistrée (crée le dossier `docs/` à la racine du projet et dépose-y le fichier `demo.webp`). GitHub affiche nativement les fichiers `.webp` animés dans le README, comme un GIF.
 
-- Java 21
-- Maven 3.9+
-- Docker et Docker Compose
-- Ollama installé (`ollama pull llama3.1` et `ollama pull nomic-embed-text`)
-- PostgreSQL 16+ avec extension `pgvector`
+---
 
-## Installation
+## 🔌 Comment ErPilot s'intègre à un ERP
+
+![Deux modes d'intégration d'ErPilot](docs/assets/erpilot-integration-v2.svg)
+
+---
+
+## ⚙️ Comment le système fonctionne
+
+![Pipeline de fonctionnement d'ErPilot](docs/assets/erpilot-flow.svg)
+
+---
+
+## 🏗️ Architecture du code
+
+![Architecture du code ErPilot](docs/assets/erpilot-architecture.svg)
+
+---
+
+## 🚀 Installation et lancement
+
+### 1. Prérequis
+
+- Java (vérifie la version exacte dans `pom.xml`)
+- Maven
+- [Ollama](https://ollama.com) installé localement **— ou, si tu préfères, une clé API vers un LLM externe (OpenAI, etc.)**
+- PostgreSQL (version supportant l'extension [`pgvector`](https://github.com/pgvector/pgvector))
+
+### 2. Installer les modèles Ollama
+
+Si tu choisis l'option locale, ErPilot utilise un modèle de langage pour générer le SQL, et un modèle d'embeddings pour la recherche vectorielle sur le schéma :
 
 ```bash
-# Cloner le projet
-git clone <url-du-repo>
-cd erpilot
+ollama pull llama3.1
+ollama pull nomic-embed-text
+```
 
-# Lancer les services (PostgreSQL + pgvector, Ollama)
-docker compose up -d
+Vérifie qu'Ollama tourne bien en arrière-plan (`ollama serve`, généralement lancé automatiquement après l'installation).
 
-# Vérifier qu'Ollama répond
-ollama run llama3.1
+> Si tu préfères passer par une API externe plutôt que par Ollama en local, configure les propriétés `spring.ai.*` correspondantes dans `application.properties` à la place des propriétés Ollama ci-dessous.
 
-# Compiler et lancer l'application
-mvn clean install
+### 3. Préparer la base PostgreSQL
+
+Crée une base PostgreSQL et active l'extension `pgvector` (utilisée pour stocker et rechercher les embeddings du schéma) :
+
+```sql
+CREATE DATABASE erpilot;
+\c erpilot
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+> Cette base peut être la même que celle de ton ERP (comme dans la démo), ou une base séparée dédiée uniquement au stockage des embeddings — les deux fonctionnent, tant que l'extension `vector` y est activée.
+
+### 4. Configurer `application.properties`
+
+Dans `src/main/resources/application.properties`, renseigne au minimum :
+
+```properties
+# Base de données applicative (stockage des embeddings du schéma via pgvector)
+spring.datasource.url=jdbc:postgresql://localhost:5432/erpilot
+spring.datasource.username=<ton_utilisateur>
+spring.datasource.password=<ton_mot_de_passe>
+spring.jpa.hibernate.ddl-auto=update
+
+# Modèles Ollama
+spring.ai.ollama.base-url=http://localhost:11434
+spring.ai.ollama.chat.options.model=llama3.1
+spring.ai.ollama.embedding.options.model=nomic-embed-text
+
+# (Optionnel) connexion automatique à la base ERP cible au démarrage
+erpilot.connection.url=jdbc:postgresql://localhost:5432/mon_erp
+erpilot.connection.username=<utilisateur_erp>
+erpilot.connection.password=<mot_de_passe_erp>
+```
+
+Si tu ne renseignes pas `erpilot.connection.*`, ErPilot démarre sans base ERP connectée et attend un appel explicite à :
+
+```bash
+POST /api/connections/connect
+Content-Type: application/json
+
+{
+  "url": "jdbc:postgresql://localhost:5432/mon_erp",
+  "username": "...",
+  "password": "..."
+}
+```
+
+### 5. Lancer l'application
+
+```bash
 mvn spring-boot:run
 ```
 
-L'application est alors accessible sur `http://localhost:8080`.
+Le serveur démarre sur `http://localhost:8080` par défaut. Les logs sont écrits dans `logs/erpilot.log` (tous les logs) et `logs/erpilot-error.log` (erreurs graves uniquement), en plus de la console.
 
-## Utilisation
+### 6. Utiliser ErPilot
 
-1. Connecter une base ERP (paramètres de connexion JDBC dans `application.yml`).
-2. Lancer le scan automatique du schéma (introspection + indexation dans pgvector).
-3. Poser une question en langage naturel via l'API ou l'interface.
-4. Consulter le résultat ainsi que le SQL généré (visible dans les logs d'audit).
+**Option A — via l'API REST directement :**
 
-## Sécurité
-
-- Aucune requête autre qu'un `SELECT` n'est autorisée à s'exécuter.
-- Les tables interrogées sont vérifiées par rapport aux permissions du rôle de l'utilisateur.
-- Les données sensibles détectées par pattern (emails, téléphones, cartes) sont masquées avant affichage.
-- Chaque interaction (question, SQL généré, résultat, utilisateur, horodatage) est enregistrée dans `audit_logs`.
-
-## Structure du projet
-
-```
-com.erpilot.app
-├── core          # coordination du flux question → réponse
-├── connector      # interface ERPConnector + implémentations (adapter pattern)
-├── ragschema      # embeddings et recherche par similarité sur le schéma
-├── llm            # intégration Spring AI / Ollama
-├── security       # sandbox SQL, permissions, masking
-├── audit          # journalisation des requêtes
-└── api            # exposition REST, authentification
+```bash
+curl -X POST http://localhost:8080/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Quels sont mes 5 meilleurs clients ?", "role": "user"}'
 ```
 
-## Roadmap
+**Option B — via le terminal coloré (recommandé pour tester/démo) :**
 
-- [ ] Support multi-ERP validé sur au moins 2 bases distinctes
-- [ ] Boucle d'auto-correction du SQL généré (1-2 tentatives en cas d'erreur)
-- [ ] Authentification SSO
-- [ ] Interface utilisateur web
-- [ ] Export des résultats (CSV / Excel)
+```bash
+chmod +x erpilot-terminal.sh
+./erpilot-terminal.sh
+```
+
+Le serveur doit être lancé (étape 5) avant de démarrer le terminal.
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Support multi-dialecte complet (MySQL, Oracle, SQL Server)
+- [ ] Développement d'un SDK (Java / Python / TypeScript) pour faciliter l'intégration d'ERPilot dans d'autres applications
+- [ ] Interface web (frontend de chat)
+- [ ] Documentation Swagger/OpenAPI intégrée
+
+Les contributions sont les bienvenues — voir `CONTRIBUTING.md`.
+
+---
+
+## 📄 Licence
+
+Ce projet est distribué sous licence [MIT](LICENSE) *(à adapter selon ton choix)*.

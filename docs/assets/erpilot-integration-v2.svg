@@ -1,0 +1,93 @@
+<svg width="100%" viewBox="0 0 700 470" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Deux chemins pour trouver une information : parcourir l'ERP ou questionner ErPilot</title>
+<desc>Un utilisateur a deux choix : consulter manuellement les nombreux modules de l'ERP (employés, commandes, stock, articles, travaux, factures, clients, fournisseurs, comptabilité, achats, RH, et plus) pour trouver une information, ou poser directement une question à ErPilot. L'ERP est connecté à une base de données spécifique, alors qu'ErPilot peut se connecter à n'importe quelle base de données.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<style>
+text{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.th{font-size:14px;font-weight:600}
+.t{font-size:13px;font-weight:400}
+.ts{font-size:12px;font-weight:400}
+.tl{font-size:11px;font-weight:500}
+</style>
+
+<!-- Utilisateur -->
+<rect x="300" y="20" width="160" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="t" x="380" y="42" text-anchor="middle" dominant-baseline="central" fill="#2C2C2A">Utilisateur</text>
+
+<!-- Trunk + split -->
+<path d="M380 64 L380 90 L180 90 L180 106" fill="none" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
+<path d="M380 90 L530 90 L530 106" fill="none" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Labels sur les branches -->
+<text class="tl" x="280" y="84" text-anchor="middle" fill="#5F5E5A">Consulter ERP</text>
+<text class="tl" x="455" y="84" text-anchor="middle" fill="#5F5E5A">Questionner</text>
+
+<!-- Bloc ERP (agrandi) -->
+<rect x="40" y="110" width="280" height="228" rx="16" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="th" x="56" y="128" fill="#2C2C2A">ERP</text>
+<text class="ts" x="56" y="146" fill="#444441">11 modules et plus</text>
+
+<!-- Rangée 1 -->
+<rect x="60" y="158" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="97" y="175" text-anchor="middle" dominant-baseline="central" fill="#042C53">Employés</text>
+
+<rect x="143" y="158" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="180" y="175" text-anchor="middle" dominant-baseline="central" fill="#042C53">Commandes</text>
+
+<rect x="226" y="158" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="263" y="175" text-anchor="middle" dominant-baseline="central" fill="#042C53">Stock</text>
+
+<!-- Rangée 2 -->
+<rect x="60" y="200" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="97" y="217" text-anchor="middle" dominant-baseline="central" fill="#042C53">Articles</text>
+
+<rect x="143" y="200" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="180" y="217" text-anchor="middle" dominant-baseline="central" fill="#042C53">Travaux</text>
+
+<rect x="226" y="200" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="263" y="217" text-anchor="middle" dominant-baseline="central" fill="#042C53">Factures</text>
+
+<!-- Rangée 3 -->
+<rect x="60" y="242" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="97" y="259" text-anchor="middle" dominant-baseline="central" fill="#042C53">Clients</text>
+
+<rect x="143" y="242" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="180" y="259" text-anchor="middle" dominant-baseline="central" fill="#042C53">Fournisseurs</text>
+
+<rect x="226" y="242" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="263" y="259" text-anchor="middle" dominant-baseline="central" fill="#042C53">Comptabilité</text>
+
+<!-- Rangée 4 -->
+<rect x="60" y="284" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="97" y="301" text-anchor="middle" dominant-baseline="central" fill="#042C53">Achats</text>
+
+<rect x="143" y="284" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text class="ts" x="180" y="301" text-anchor="middle" dominant-baseline="central" fill="#042C53">RH</text>
+
+<rect x="226" y="284" width="74" height="34" rx="6" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5" stroke-dasharray="3 3"/>
+<text class="ts" x="263" y="301" text-anchor="middle" dominant-baseline="central" fill="#042C53">+ modules</text>
+
+<!-- Bloc ErPilot -->
+<rect x="420" y="110" width="220" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text class="th" x="530" y="128" text-anchor="middle" fill="#26215C">ErPilot</text>
+<text class="ts" x="530" y="146" text-anchor="middle" fill="#534AB7">Réponse immédiate</text>
+
+<!-- Convergence vers la base de données -->
+<path d="M180 338 L180 380 L350 380 L350 400" fill="none" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
+<path d="M530 166 L530 380 L410 380 L410 400" fill="none" stroke="#5F5E5A" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Labels sur les flèches vers la base de données -->
+<text class="tl" x="265" y="368" text-anchor="middle" fill="#5F5E5A">Connecté à une base de</text>
+<text class="tl" x="265" y="382" text-anchor="middle" fill="#5F5E5A">données spécifique</text>
+
+<text class="tl" x="470" y="368" text-anchor="middle" fill="#5F5E5A">Connecté à n'importe</text>
+<text class="tl" x="470" y="382" text-anchor="middle" fill="#5F5E5A">quelle base de données</text>
+
+<rect x="300" y="400" width="160" height="44" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text class="t" x="380" y="422" text-anchor="middle" dominant-baseline="central" fill="#04342C">Base de données</text>
+
+</svg>
