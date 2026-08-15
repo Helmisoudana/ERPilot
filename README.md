@@ -11,17 +11,16 @@ ErPilot est un **agent open source**, montable sur n'importe quel ERP, capable d
 ## 📌 Problématique
 
 Plus un ERP grandit — beaucoup d'onglets, beaucoup de tables, beaucoup de lignes — plus il devient difficile d'en extraire une information précise sans :
-- connaître en détail le schéma de la base de données et savoir écrire du SQL,
-- solliciter un(e) développeur/DBA à chaque nouvelle question,
+- connaître en détail l'ERP, ses différents écrans et ses différents boutons,
+- solliciter un(e) expert pour effectuer des actions avancées dans l'ERP,
 - se contenter des rapports prédéfinis, souvent trop rigides pour suivre la complexité réelle des données.
-
-**ErPilot supprime cette barrière, quelle que soit la taille de l'ERP.** N'importe quel utilisateur métier pose sa question en français (ou dans une autre langue), et le système se charge de retrouver les bonnes tables au milieu de centaines d'autres, générer le SQL correspondant, l'exécuter, et retourner un résultat exploitable.
+  **ErPilot supprime cette barrière, quelle que soit la taille de l'ERP.** N'importe quel utilisateur métier pose sa question en français (ou dans une autre langue), et le système se charge de retrouver les bonnes tables au milieu de centaines d'autres, générer le SQL correspondant, l'exécuter, et retourner un résultat exploitable.
 
 Deux façons de l'utiliser :
 - **En agent connecté** : ErPilot se branche sur la base de données de l'ERP existant, sans rien modifier à l'application en place.
 - **Intégré directement au projet** : ErPilot devient un module du projet ERP lui-même.
-
 ---
+
 
 ## ✨ Fonctionnalités
 
